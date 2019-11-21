@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
@@ -11,29 +13,29 @@ export default class App extends Component {
     // const client = new ApolloClient({
     //   uri: "https://hasura-a-2.herokuapp.com/v1/graphql"
     // });
-    //   const FEED_QUERY = gql`
-    //   analytic_dim_orders {
-    //   client_order_id
-    //   created_at
-    //   created_by
-    //   custom_attribute_1
-    //   data_source
-    //   declined_flag
-    //   express_ship_flag
-    //   failed_order_flag
-    //   fk_client_id
-    //   pending_flag
-    //   shippable_order_flag
-    //   shipped_flag
-    //   split_shipment_flag
-    //   updated_at
-    //   updated_by
-    //   vendor_order_flag
-    // }
-    //   `;
+    const FEED_QUERY = gql`
+      analytic_dim_orders {
+      client_order_id
+      created_at
+      created_by
+      custom_attribute_1
+      data_source
+      declined_flag
+      express_ship_flag
+      failed_order_flag
+      fk_client_id
+      pending_flag
+      shippable_order_flag
+      shipped_flag
+      split_shipment_flag
+      updated_at
+      updated_by
+      vendor_order_flag
+    }
+   `;
     this.state = {
       // client: client,
-      // gquery: FEED_QUERY,
+      gquery: FEED_QUERY,
       queryData: null,
       columnDefinition: {
         field: "athlete",
@@ -584,20 +586,36 @@ export default class App extends Component {
 
   render() {
     return (
-      <div
-        className="ag-theme-balham"
-        style={{
-          height: "500px"
-          // width: "600px"
+      <Query query={gql}>
+        {({ loading, error, data }) => {
+          if (loading) return <p>Good things take time....</p>;
+          if (error) return <p>Something went wrong...</p>;
+          console.log("datatatatatatatata");
+          console.log(data);
+          return (
+            <div className="row">
+              {/* {data.allBooks.map(book => <Book book={book} />)} */}
+              <h1>Table after</h1>
+            </div>
+          );
         }}
-      >
-        <AgGridReact
-          columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}
-          modules={AllCommunityModules}
-        />
-      </div>
+      </Query>
     );
+    // return (
+    //   <div
+    //     className="ag-theme-balham"
+    //     style={{
+    //       height: "500px"
+    //       // width: "600px"
+    //     }}
+    //   >
+    //     <AgGridReact
+    //       columnDefs={this.state.columnDefs}
+    //       rowData={this.state.rowData}
+    //       modules={AllCommunityModules}
+    //     />
+    //   </div>
+    // );
 
     //   <
     //   ApolloProvider client = {
